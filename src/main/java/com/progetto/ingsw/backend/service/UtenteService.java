@@ -39,25 +39,24 @@ public class UtenteService {
 
     @Transactional
     public void cambiaPassword(Integer id, String vecchiaPassword, String nuovaPassword) {
-        // 1. Recupero l'utente dal DB
+        // Recupero l'utente dal DB
         Utente utente = getProfilo(id);
 
-        // 2. Controllo se la vecchia password fornita coincide con quella (criptata) sul DB
-        // .matches(password_chiaro, password_criptata)
+        // Controllo se la vecchia password fornita coincide con quella (criptata) sul DB.matches(password_chiaro, password_criptata)
         if (!passwordEncoder.matches(vecchiaPassword, utente.getPassword())) {
             throw new RuntimeException("La vecchia password non è corretta");
         }
 
-        // 3. Controllo se la nuova password è uguale alla vecchia (opzionale ma consigliato)
+        // Controllo se la nuova password è uguale alla vecchia
         if (vecchiaPassword.equals(nuovaPassword)) {
             throw new RuntimeException("La nuova password non può essere uguale alla precedente");
         }
 
-        // 4. Cripto la nuova password prima di salvarla
+        // Cripto la nuova password prima di salvarla
         String passwordCriptata = passwordEncoder.encode(nuovaPassword);
         utente.setPassword(passwordCriptata);
 
-        // 5. Salvo l'utente aggiornato
+        // Salvo l'utente aggiornato
         utenteRepository.save(utente);
     }
 }
