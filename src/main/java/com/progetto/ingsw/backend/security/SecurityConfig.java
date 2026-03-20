@@ -39,6 +39,10 @@ public class SecurityConfig {
                         // Rotte Pubbliche: Login, Registrazione e consultazione Auto
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auto/**").permitAll()
+                        .requestMatchers("/api/confronto/**").permitAll()
+                        .requestMatchers("/api/preferiti/**").permitAll()
+                        .requestMatchers("/api/recensioni/**").permitAll()
+                        .requestMatchers("/api/utente/**").permitAll()
 
                         // Rotte Protette: Tutto il resto richiede autenticazione (Confronti, Preferiti, Recensioni)
                         .anyRequest().authenticated()

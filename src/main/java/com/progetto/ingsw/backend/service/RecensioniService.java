@@ -1,5 +1,6 @@
 package com.progetto.ingsw.backend.service;
 
+import com.progetto.ingsw.backend.dto.RecensioneDTO;
 import com.progetto.ingsw.backend.model.Confronto;
 import com.progetto.ingsw.backend.model.Recensioni;
 import com.progetto.ingsw.backend.model.Utente;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -45,14 +47,25 @@ public class RecensioniService {
         r.setConfronto(c);
         r.setVoto(voto);
         r.setCommento(commento);
+        r.setDataRecensione(java.time.LocalDateTime.now());
 
         return recensioniRepository.save(r);
     }
 
-    // RECUPERA RECENSIONI DI UN CONFRONTO
-    @Transactional(readOnly = true)
-    public List<Recensioni> getRecensioniPerSfida(Integer confrontoId) {
-        return recensioniRepository.findByConfrontoIdOrderByDataRecensioneDesc(confrontoId);
+    public List<RecensioneDTO> getRecensioniPerSfida(Integer confrontoId) {
+        return recensioniRepository.findByConfrontoIdOrderByDataRecensioneDesc(confrontoId)
+                .stream()
+                .map(r -> {
+                    RecensioneDTO dto = new RecensioneDTO();
+                    dto.setId(r.getId());
+                    dto.setVoto(r.getVoto());
+                    dto.setCommento(r.getCommento());
+                    dto.setNome(r.getUtente().getNome());
+                    dto.setCognome(r.getUtente().getCognome());
+                    dto.setEmail(r.getUtente().getEmail());
+                    dto.setData(String.valueOf(java.time.LocalDateTime.now()));
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
     // MEDIA VOTI

@@ -21,4 +21,6 @@ public interface AutoRepository extends JpaRepository<Auto, Integer> {
     List<Auto> findTop10ByOrderByCvDesc();
 
     List<Auto> findTop10ByOrderByCo2Asc();
+
+    List<Auto> findAutoById(Integer id);
 }

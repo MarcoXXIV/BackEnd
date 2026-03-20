@@ -16,6 +16,7 @@ public class AutoService {
     @Autowired
     private AutoRepository autoRepository;
 
+
     // RECUPERO TUTTO IL CATALOGO
     public List<Auto> getAllAuto() {
         return autoRepository.findAll();
@@ -78,13 +79,5 @@ public class AutoService {
             throw new RuntimeException("Impossibile eliminare: Auto con ID " + id + " non trovata.");
         }
         autoRepository.deleteById(id);
-    }
-
-    // usiamo direttamente il repository
-    public List<Auto> getTopPotenza() {
-        // Usiamo il metodo del repository che è molto più veloce
-        return autoRepository.findTop10ByOrderByCvDesc().stream()
-                .limit(5) // Se ne vuoi solo 5
-                .collect(Collectors.toList());
     }
 }
