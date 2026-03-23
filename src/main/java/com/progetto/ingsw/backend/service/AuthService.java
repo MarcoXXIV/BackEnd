@@ -29,10 +29,16 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRuolo("USER"); // Default
 
-        repository.save(user);
+        var savedUser = repository.save(user); // Salviamo per avere l'ID generato dal DB
 
-        var jwtToken = jwtUtils.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+        var jwtToken = jwtUtils.generateToken(savedUser);
+
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .id(savedUser.getId())
+                .email(savedUser.getEmail())
+                .ruolo(savedUser.getRuolo())
+                .build();
     }
 
     public AuthResponse authenticate(LoginRequest request) {
@@ -43,6 +49,11 @@ public class AuthService {
         var user = repository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtUtils.generateToken(user);
 
-        return AuthResponse.builder().token(jwtToken).build();
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .id(user.getId())
+                .email(user.getEmail())
+                .ruolo(user.getRuolo())
+                .build();
     }
 }

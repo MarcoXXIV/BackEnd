@@ -42,10 +42,27 @@ public class AutoController {
         return ResponseEntity.ok(autoService.getAutoPerCategoria(categoria));
     }
 
+    // per aggiungere auto dal admin
+    @PostMapping("/AggiungiAuto")
+    public ResponseEntity<?> salvaAuto(@RequestBody Auto auto) {
+        try {
+            Auto nuovaAuto = autoService.salvaAuto(auto);
+            return ResponseEntity.ok(nuovaAuto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // auto con top accellerazione, funziona
     @GetMapping("/top/accelerazione")
     public ResponseEntity<List<Auto>> getTopAccelerazione() {
         return ResponseEntity.ok(autoService.getTopAccelerazione());
+    }
+
+    @DeleteMapping("/elimina/{id}")
+    public ResponseEntity<?> eliminaAuto(@PathVariable Integer id) {
+        autoService.eliminaAuto(id);
+        return ResponseEntity.ok("L'auto con ID " + id + " è stata eliminata correttamente dal catalogo.");
     }
 
     // auto con minor impatto ambientale, funziona
