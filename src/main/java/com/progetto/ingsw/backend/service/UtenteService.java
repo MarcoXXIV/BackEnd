@@ -1,62 +1,50 @@
 package com.progetto.ingsw.backend.service;
 
+import com.progetto.ingsw.backend.dto.UtenteDTO;
+import com.progetto.ingsw.backend.mapper.UtenteMapper;
 import com.progetto.ingsw.backend.model.Utente;
 import com.progetto.ingsw.backend.repository.UtenteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UtenteService {
 
-    @Autowired
-    private UtenteRepository utenteRepository;
+    private final UtenteRepository utenteRepository;
+    private final UtenteMapper utenteMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // Recupera i dati del profilo
-    public Utente getProfilo(Integer id) {
-        return utenteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    public Utente getUtenteLoggatoEntity() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return utenteRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non loggato"));
     }
 
-    // Metodo per verificare se l'utente ha i permessi da Admin
-    public boolean isUserAdmin(Integer utenteId) {
-        return utenteRepository.findById(utenteId)
-                .map(u -> "ADMIN".equals(u.getRuolo()))
-                .orElse(false);
+    @Transactional(readOnly = true)
+    public UtenteDTO getProfiloDinamico() {
+        return utenteMapper.mapToDTO(getUtenteLoggatoEntity());
     }
 
-    // Aggiorna le informazioni base
-    public Utente aggiornaUtente(Integer id, Utente nuoviDati) {
-        Utente esistente = getProfilo(id);
+    public UtenteDTO aggiornaUtente(Utente nuoviDati) {
+        Utente esistente = getUtenteLoggatoEntity();
         esistente.setNome(nuoviDati.getNome());
         esistente.setCognome(nuoviDati.getCognome());
-        return utenteRepository.save(esistente);
+        return utenteMapper.mapToDTO(utenteRepository.save(esistente));
     }
 
-    @Transactional
-    public void cambiaPassword(Integer id, String vecchiaPassword, String nuovaPassword) {
-        // Recupero l'utente dal DB
-        Utente utente = getProfilo(id);
+    public boolean isUserAdmin() {
+        Utente u = getUtenteLoggatoEntity();
+        return u.getRuolo() != null && u.getRuolo().equalsIgnoreCase("ADMIN");
+    }
 
-        // Controllo se la vecchia password fornita coincide con quella (criptata) sul DB.matches(password_chiaro, password_criptata)
-        if (!passwordEncoder.matches(vecchiaPassword, utente.getPassword())) {
-            throw new RuntimeException("La vecchia password non è corretta");
-        }
-
-        // Controllo se la nuova password è uguale alla vecchia
-        if (vecchiaPassword.equals(nuovaPassword)) {
-            throw new RuntimeException("La nuova password non può essere uguale alla precedente");
-        }
-
-        // Cripto la nuova password prima di salvarla
-        String passwordCriptata = passwordEncoder.encode(nuovaPassword);
-        utente.setPassword(passwordCriptata);
-
-        // Salvo l'utente aggiornato
-        utenteRepository.save(utente);
+    public void cambiaPassword(String vecchia, String nuova) {
+        Utente u = getUtenteLoggatoEntity();
+        if (!passwordEncoder.matches(vecchia, u.getPassword())) throw new RuntimeException("Vecchia password errata");
+        u.setPassword(passwordEncoder.encode(nuova));
+        utenteRepository.save(u);
     }
 }

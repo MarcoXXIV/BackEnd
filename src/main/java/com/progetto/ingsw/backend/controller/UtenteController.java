@@ -1,5 +1,6 @@
 package com.progetto.ingsw.backend.controller;
 
+import com.progetto.ingsw.backend.dto.UtenteDTO;
 import com.progetto.ingsw.backend.model.Utente;
 import com.progetto.ingsw.backend.service.UtenteService;
 import lombok.RequiredArgsConstructor;
@@ -16,37 +17,27 @@ public class UtenteController {
 
     private final UtenteService utenteService;
 
-    // RECUPERA PROFILO (Dati personali), funziona
     @GetMapping("/profilo")
-    public ResponseEntity<Utente> getMioProfilo() {
-        // Temporaneo: ID 1. Poi lo prenderemo dal Token JWT
-        Integer idUtenteCorrente = 1;
-        return ResponseEntity.ok(utenteService.getProfilo(idUtenteCorrente));
+    public ResponseEntity<UtenteDTO> getMioProfilo() {
+        return ResponseEntity.ok(utenteService.getProfiloDinamico());
     }
 
-    // AGGIORNA DATI BASE (Nome, Cognome)
     @PutMapping("/aggiorna")
-    public ResponseEntity<Utente> aggiorna(@RequestBody Utente nuoviDati) {
-        Integer idUtenteCorrente = 1;
-        return ResponseEntity.ok(utenteService.aggiornaUtente(idUtenteCorrente, nuoviDati));
+    public ResponseEntity<UtenteDTO> aggiorna(@RequestBody Utente nuoviDati) {
+        return ResponseEntity.ok(utenteService.aggiornaUtente(nuoviDati));
     }
 
-    // CAMBIO PASSWORD
     @PostMapping("/cambia-password")
     public ResponseEntity<String> cambiaPassword(@RequestBody Map<String, String> payload) {
-        Integer idUtenteCorrente = 1;
-
-        String vecchiaPsw = payload.get("vecchiaPassword");
-        String nuovaPsw = payload.get("nuovaPassword");
-
-        utenteService.cambiaPassword(idUtenteCorrente, vecchiaPsw, nuovaPsw);
+        utenteService.cambiaPassword(
+                payload.get("vecchiaPassword"),
+                payload.get("nuovaPassword")
+        );
         return ResponseEntity.ok("Password aggiornata con successo!");
     }
 
-    // VERIFICA SE ADMIN (Utile per Angular per mostrare/nascondere il tasto "Admin Panel"), funziona
     @GetMapping("/is-admin")
     public ResponseEntity<Boolean> checkAdmin() {
-        Integer idUtenteCorrente = 1;
-        return ResponseEntity.ok(utenteService.isUserAdmin(idUtenteCorrente));
+        return ResponseEntity.ok(utenteService.isUserAdmin());
     }
 }

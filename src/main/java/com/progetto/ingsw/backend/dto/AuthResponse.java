@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder // <--- Genera il metodo .builder()
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthResponse {

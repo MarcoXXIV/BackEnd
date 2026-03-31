@@ -2,8 +2,10 @@ package com.progetto.ingsw.backend.repository;
 
 import com.progetto.ingsw.backend.model.Confronto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public interface ConfrontoRepository extends JpaRepository<Confronto, Integer> {
     // Recupera tutti i confronti fatti da un utente specifico (dal più recente)
     List<Confronto> findByUtenteIdOrderByDataConfrontoDesc(Integer utenteId);
 
+    @Modifying
+    @Transactional
     void deleteByUtenteId(Integer utenteId);
 
     // Utile per una sezione "Le auto più confrontate dalla community"

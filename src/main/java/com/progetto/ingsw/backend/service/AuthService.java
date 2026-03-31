@@ -1,8 +1,6 @@
 package com.progetto.ingsw.backend.service;
 
-import com.progetto.ingsw.backend.dto.AuthResponse;
-import com.progetto.ingsw.backend.dto.LoginRequest;
-import com.progetto.ingsw.backend.dto.RegisterRequest;
+import com.progetto.ingsw.backend.dto.*;
 import com.progetto.ingsw.backend.model.Utente;
 import com.progetto.ingsw.backend.repository.UtenteRepository;
 import com.progetto.ingsw.backend.security.JwtUtils;
@@ -15,45 +13,30 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
     private final UtenteRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
-        var user = new Utente();
-        user.setNome(request.getNome());
-        user.setCognome(request.getCognome());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRuolo("USER"); // Default
-
-        var savedUser = repository.save(user); // Salviamo per avere l'ID generato dal DB
-
-        var jwtToken = jwtUtils.generateToken(savedUser);
-
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .id(savedUser.getId())
-                .email(savedUser.getEmail())
-                .ruolo(savedUser.getRuolo())
+        var user = Utente.builder()
+                .nome(request.getNome())
+                .cognome(request.getCognome())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .ruolo("USER") // Default
                 .build();
+        repository.save(user);
+        var jwtToken = jwtUtils.generateToken(user);
+        return AuthResponse.builder().token(jwtToken).build();
     }
 
     public AuthResponse authenticate(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-
         var user = repository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtUtils.generateToken(user);
-
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .id(user.getId())
-                .email(user.getEmail())
-                .ruolo(user.getRuolo())
-                .build();
+        return AuthResponse.builder().token(jwtToken).build();
     }
 }

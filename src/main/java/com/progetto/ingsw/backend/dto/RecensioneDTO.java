@@ -5,9 +5,8 @@ import lombok.Data;
 @Data
 public class RecensioneDTO {
     private Integer id;
-    private String nome;
-    private String cognome;
-    private String email;
+    private UtenteDTO utente;
+    private ConfrontoDTO confronto;
     private Integer voto;
     private String commento;
     private String data;
