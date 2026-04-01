@@ -5,6 +5,8 @@ import com.progetto.ingsw.backend.model.Utente;
 import com.progetto.ingsw.backend.service.UtenteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -38,6 +40,10 @@ public class UtenteController {
 
     @GetMapping("/is-admin")
     public ResponseEntity<Boolean> checkAdmin() {
-        return ResponseEntity.ok(utenteService.isUserAdmin());
+        // Recupera l'utente autenticato dal contesto di sicurezza
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return ResponseEntity.ok(isAdmin);
     }
 }

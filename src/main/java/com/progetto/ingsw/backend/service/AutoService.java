@@ -95,6 +95,10 @@ public class AutoService {
     public AutoDTO salvaAuto(Auto auto) {
         if (auto == null) throw new RuntimeException("L'auto non può essere null");
 
+        // Se l'ID è 0 o nullo, assicuriamoci che Hibernate lo veda come NUOVO
+        if (auto.getId() != null && auto.getId() == 0) {
+            auto.setId(null);
+        }
         // VALIDAZIONI STRINGHE
         if (isInvalid(auto.getMarca())) throw new RuntimeException("La marca è obbligatoria");
         if (isInvalid(auto.getModello())) throw new RuntimeException("Il modello è obbligatorio");

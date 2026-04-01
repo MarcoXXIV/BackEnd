@@ -22,8 +22,17 @@ public class ApplicationConfig {
     //  trovare l'utente nel DB usando l'email
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> (org.springframework.security.core.userdetails.UserDetails) utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
+        return email -> {
+            var utente = utenteRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + email));
+
+            // Trasformiamo il ruolo stringa (es. "ADMIN") in una GrantedAuthority (es. "ROLE_ADMIN")
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username(utente.getEmail())
+                    .password(utente.getPassword())
+                    .authorities("ROLE_" + utente.getRuolo().toUpperCase())
+                    .build();
+        };
     }
 
     // Creiamo il Bean che mancava (AuthenticationProvider)

@@ -1,6 +1,8 @@
 package com.progetto.ingsw.backend.repository;
 
+import com.progetto.ingsw.backend.model.Auto;
 import com.progetto.ingsw.backend.model.Confronto;
+import com.progetto.ingsw.backend.model.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ConfrontoRepository extends JpaRepository<Confronto, Integer> {
@@ -31,4 +34,5 @@ public interface ConfrontoRepository extends JpaRepository<Confronto, Integer> {
 
     long countByUtenteId(Integer utenteId);
 
+    Optional<Confronto> findByUtenteAndAuto1AndAuto2(Utente utente, Auto a1, Auto a2);
 }

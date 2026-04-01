@@ -2,7 +2,9 @@ package com.progetto.ingsw.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "confronto")
@@ -33,4 +35,8 @@ public class Confronto {
 
     @Column(name = "data_confronto", insertable = false, updatable = false)
     private LocalDateTime dataConfronto;
+
+    @OneToMany(mappedBy = "confronto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Recensioni> recensioni;
 }

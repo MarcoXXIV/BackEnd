@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,19 +26,27 @@ public class ConfrontoService {
 
     @Transactional
     public ConfrontoDTO eseguiBattaglia(Integer auto1Id, Integer auto2Id) {
+        // 1. Recupero l'utente loggato e le entità delle auto
         Utente utente = utenteService.getUtenteLoggatoEntity();
 
-        // 2. CONTROLLO ANTI-DUPLICATI: Se la sfida esiste già, blocchiamo tutto
-        if (sfidaGiaFatta(auto1Id, auto2Id)) {
-            throw new RuntimeException("Hai già effettuato questo confronto. Controlla la tua cronologia!");
+        Auto a1 = autoRepository.findById(auto1Id)
+                .orElseThrow(() -> new RuntimeException("Auto 1 non trovata"));
+        Auto a2 = autoRepository.findById(auto2Id)
+                .orElseThrow(() -> new RuntimeException("Auto 2 non trovata"));
+
+        // 2. CONTROLLO ANTI-DUPLICATI
+        // CORRETTO: Usiamo confrontoRepository (non repository)
+        Optional<Confronto> esistente = confrontoRepository.findByUtenteAndAuto1AndAuto2(utente, a1, a2);
+
+        if (esistente.isPresent()) {
+            return confrontoMapper.mapToDTO(esistente.get());
         }
 
-        Auto a1 = autoRepository.findById(auto1Id).orElseThrow(() -> new RuntimeException("Auto 1 non trovata"));
-        Auto a2 = autoRepository.findById(auto2Id).orElseThrow(() -> new RuntimeException("Auto 2 non trovata"));
+        // 3. LOGICA DI CONFRONTO (Punteggi)
+        int p1 = 0;
+        int p2 = 0;
 
-        int p1 = 0; int p2 = 0;
-
-        // --- LOGICA DI CONFRONTO ---
+        // Più alto è meglio
         if (compare(a1.getPrezzo(), a2.getPrezzo()) > 0) p1++; else if (compare(a1.getPrezzo(), a2.getPrezzo()) < 0) p2++;
         if (compare(a1.getCv(), a2.getCv()) > 0) p1++; else if (compare(a1.getCv(), a2.getCv()) < 0) p2++;
         if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) > 0) p1++; else if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) < 0) p2++;
@@ -46,6 +55,7 @@ public class ConfrontoService {
         if (compare(a1.getCilindrata(), a2.getCilindrata()) > 0) p1++; else if (compare(a1.getCilindrata(), a2.getCilindrata()) < 0) p2++;
         if (compare(a1.getAnno(), a2.getAnno()) > 0) p1++; else if (compare(a1.getAnno(), a2.getAnno()) < 0) p2++;
 
+        // Più basso è meglio
         if (compare(a1.getAccelerazione0100(), a2.getAccelerazione0100()) < 0) p1++; else if (compare(a1.getAccelerazione0100(), a2.getAccelerazione0100()) > 0) p2++;
         if (compare(a1.getAccelerazione100200(), a2.getAccelerazione100200()) < 0) p1++; else if (compare(a1.getAccelerazione100200(), a2.getAccelerazione100200()) > 0) p2++;
         if (compare(a1.getAccelerazione80140(), a2.getAccelerazione80140()) < 0) p1++; else if (compare(a1.getAccelerazione80140(), a2.getAccelerazione80140()) > 0) p2++;
@@ -54,20 +64,24 @@ public class ConfrontoService {
         if (compare(a1.getRapportoPesoPotenza(), a2.getRapportoPesoPotenza()) < 0) p1++; else if (compare(a1.getRapportoPesoPotenza(), a2.getRapportoPesoPotenza()) > 0) p2++;
         if (compare(a1.getCo2(), a2.getCo2()) < 0) p1++; else if (compare(a1.getCo2(), a2.getCo2()) > 0) p2++;
 
+        // 4. CREAZIONE E SALVATAGGIO
         Confronto c = new Confronto();
         c.setUtente(utente);
         c.setAuto1(a1);
         c.setAuto2(a2);
+        // CORRETTO: Nomi dei setter allineati alla tua entità
         c.setPunteggio1(p1);
         c.setPunteggio2(p2);
         c.setDataConfronto(java.time.LocalDateTime.now());
 
+        // CORRETTO: Usiamo confrontoRepository
         return confrontoMapper.mapToDTO(confrontoRepository.save(c));
     }
 
-    private <T extends Comparable<T>> int compare(T v1, T v2) {
-        if (v1 == null || v2 == null) return 0;
-        return v1.compareTo(v2);
+    // Metodo di utility per i confronti tra Double/Integer null-safe
+    private int compare(Number n1, Number n2) {
+        if (n1 == null || n2 == null) return 0;
+        return Double.compare(n1.doubleValue(), n2.doubleValue());
     }
 
     @Transactional(readOnly = true)

@@ -17,4 +17,5 @@ public interface UtenteRepository extends JpaRepository<Utente, Integer> {
 
     // Utile se vuoi recuperare l'utente tramite nome e cognome (es. per una ricerca admin)
     Optional<Utente> findByNomeAndCognome(String nome, String cognome);
+
 }

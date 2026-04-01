@@ -27,15 +27,18 @@ public class PreferitiService {
 
     public void aggiungiAiPreferiti(Integer confrontoId) {
         Utente u = utenteService.getUtenteLoggatoEntity();
+
         if (preferitiRepository.existsByUtenteIdAndConfrontoId(u.getId(), confrontoId)) {
             throw new RuntimeException("Già presente nei preferiti");
         }
-        Confronto c = confrontoRepository.findById(confrontoId).orElseThrow(() -> new RuntimeException("Confronto non trovato"));
+
+        Confronto c = confrontoRepository.findById(confrontoId)
+                .orElseThrow(() -> new RuntimeException("Confronto non trovato"));
 
         Preferiti p = new Preferiti();
         p.setUtente(u);
         p.setConfronto(c);
-        p.setDataAggiunta(java.time.LocalDateTime.now());
+
         preferitiRepository.save(p);
     }
 
@@ -47,13 +50,22 @@ public class PreferitiService {
     @Transactional(readOnly = true)
     public List<PreferitoDTO> getPreferitiUtente() {
         Utente u = utenteService.getUtenteLoggatoEntity();
-        return preferitiRepository.findByUtenteIdOrderByDataAggiuntaDesc(u.getId())
-                .stream().map(preferitiMapper::mapToDTO).collect(Collectors.toList());
+
+        System.out.println("Carico preferiti per utente ID = " + u.getId() + ", email = " + u.getEmail());
+
+        List<Preferiti> preferiti = preferitiRepository.findAllCompletiByUtenteId(u.getId());
+
+        System.out.println("Preferiti trovati = " + preferiti.size());
+
+        return preferiti.stream()
+                .map(preferitiMapper::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     public boolean togglePreferito(Integer confrontoId) {
         Utente u = utenteService.getUtenteLoggatoEntity();
         Optional<Preferiti> esistente = preferitiRepository.findByUtenteIdAndConfrontoId(u.getId(), confrontoId);
+
         if (esistente.isPresent()) {
             preferitiRepository.delete(esistente.get());
             return false;
@@ -65,6 +77,11 @@ public class PreferitiService {
 
     @Transactional(readOnly = true)
     public long contaPreferiti() {
-        return preferitiRepository.countByUtenteId(utenteService.getUtenteLoggatoEntity().getId());
+        Utente u = utenteService.getUtenteLoggatoEntity();
+        long count = preferitiRepository.countByUtenteId(u.getId());
+
+        System.out.println("Conteggio preferiti utente ID " + u.getId() + " = " + count);
+
+        return count;
     }
 }

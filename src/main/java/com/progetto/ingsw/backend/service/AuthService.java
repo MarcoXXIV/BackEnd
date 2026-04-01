@@ -24,19 +24,42 @@ public class AuthService {
                 .cognome(request.getCognome())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .ruolo("USER") // Default
+                .ruolo("USER")
                 .build();
-        repository.save(user);
-        var jwtToken = jwtUtils.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+
+        var savedUser = repository.save(user); // Recuperiamo l'utente salvato (con ID generato)
+        var jwtToken = jwtUtils.generateToken(savedUser);
+
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .id(savedUser.getId())
+                .email(savedUser.getEmail())
+                .ruolo(savedUser.getRuolo())
+                .build();
     }
 
     public AuthResponse authenticate(LoginRequest request) {
+        // 1. Esegue l'autenticazione (se fallisce lancia un'eccezione 403)
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
-        var user = repository.findByEmail(request.getEmail()).orElseThrow();
+
+        // 2. Recupera l'utente completo dal database
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        // 3. Genera il token JWT
         var jwtToken = jwtUtils.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+
+        // 4. COSTRUISCI LA RISPOSTA COMPLETA (Aggiungi i campi mancanti)
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .id(user.getId())           // <--- Fondamentale
+                .email(user.getEmail())     // <--- Fondamentale
+                .ruolo(user.getRuolo())     // <--- IL CAMPO CHE SERVE PER ADMIN!
+                .build();
     }
 }

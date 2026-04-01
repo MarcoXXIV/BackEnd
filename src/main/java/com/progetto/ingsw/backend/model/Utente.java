@@ -23,11 +23,20 @@ public class Utente implements UserDetails {
     private String password;
     private String nome;
     private String cognome;
-    private String ruolo; // Es: "ADMIN" o "USER"
+    private String ruolo;
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Confronto> confronti;
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Recensioni> recensioni;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(ruolo));
+        String roleName = ruolo.startsWith("ROLE_") ? ruolo : "ROLE_" + ruolo;
+        return List.of(new SimpleGrantedAuthority(roleName));
     }
 
     @Override
