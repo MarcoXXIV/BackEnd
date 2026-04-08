@@ -6,7 +6,8 @@ import lombok.Data;
 public class RecensioneDTO {
     private Integer id;
     private UtenteDTO utente;
-    private ConfrontoDTO confronto;
+    private AutoDTO auto1;
+    private AutoDTO auto2;
     private Integer voto;
     private String commento;
     private String data;

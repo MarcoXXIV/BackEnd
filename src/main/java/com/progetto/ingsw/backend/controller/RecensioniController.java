@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/recensioni")
@@ -17,19 +18,27 @@ public class RecensioniController {
 
     private final RecensioniService recensioniService;
 
-    @PostMapping("/aggiungi/{confrontoId}")
-    public ResponseEntity<RecensioneDTO> scrivi(
-            @PathVariable Integer confrontoId,
+    @PostMapping("/aggiungi")
+    public ResponseEntity<?> scrivi(
+            @RequestParam Integer auto1,
+            @RequestParam Integer auto2,
             @RequestParam Integer voto,
             @RequestParam String commento) {
-
-        RecensioneDTO nuova = recensioniService.scriviRecensione(confrontoId, voto, commento);
-        return new ResponseEntity<>(nuova, HttpStatus.CREATED);
+        try {
+            RecensioneDTO nuova = recensioniService.scriviRecensione(auto1, auto2, voto, commento);
+            return new ResponseEntity<>(nuova, HttpStatus.CREATED);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
-    @GetMapping("/sfida/{confrontoId}")
-    public ResponseEntity<List<RecensioneDTO>> getPerSfida(@PathVariable Integer confrontoId) {
-        return ResponseEntity.ok(recensioniService.getRecensioniPerSfida(confrontoId));
+    @GetMapping("/coppia")
+    public ResponseEntity<List<RecensioneDTO>> getPerCoppia(
+            @RequestParam Integer auto1Id,
+            @RequestParam Integer auto2Id) {
+        return ResponseEntity.ok(recensioniService.getRecensioniPerCoppia(auto1Id, auto2Id));
     }
 
     @GetMapping("/mie")
@@ -37,14 +46,18 @@ public class RecensioniController {
         return ResponseEntity.ok(recensioniService.getMieRecensioni());
     }
 
-    @GetMapping("/media/{confrontoId}")
-    public ResponseEntity<Double> getMedia(@PathVariable Integer confrontoId) {
-        return ResponseEntity.ok(recensioniService.getMediaVoti(confrontoId));
+    @GetMapping("/media")
+    public ResponseEntity<Double> getMedia(
+            @RequestParam Integer auto1Id,
+            @RequestParam Integer auto2Id) {
+        return ResponseEntity.ok(recensioniService.getMediaVoti(auto1Id, auto2Id));
     }
 
-    @DeleteMapping("/elimina/{confrontoId}")
-    public ResponseEntity<Void> elimina(@PathVariable Integer confrontoId) {
-        recensioniService.eliminaRecensione(confrontoId);
+    @DeleteMapping("/elimina")
+    public ResponseEntity<Void> elimina(
+            @RequestParam Integer auto1Id,
+            @RequestParam Integer auto2Id) {
+        recensioniService.eliminaRecensione(auto1Id, auto2Id);
         return ResponseEntity.noContent().build();
     }
 }

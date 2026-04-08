@@ -24,6 +24,15 @@ public class ConfrontoService {
     private final UtenteService utenteService;
     private final ConfrontoMapper confrontoMapper;
 
+    private int firstId(int id1, int id2) {
+        return Math.min(id1, id2);
+    }
+
+    private int secondId(int id1, int id2) {
+        return Math.max(id1, id2);
+    }
+
+
     @Transactional
     public ConfrontoDTO eseguiBattaglia(Integer auto1Id, Integer auto2Id) {
         // 1. Recupero l'utente loggato e le entità delle auto

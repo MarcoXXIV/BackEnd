@@ -18,6 +18,8 @@ public interface ConfrontoRepository extends JpaRepository<Confronto, Integer> {
     // Recupera tutti i confronti fatti da un utente specifico (dal più recente)
     List<Confronto> findByUtenteIdOrderByDataConfrontoDesc(Integer utenteId);
 
+    Optional<Confronto> findByAuto1IdAndAuto2Id(Integer auto1Id, Integer auto2Id);
+
     @Modifying
     @Transactional
     void deleteByUtenteId(Integer utenteId);

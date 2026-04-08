@@ -2,17 +2,15 @@ package com.progetto.ingsw.backend.mapper;
 
 import com.progetto.ingsw.backend.dto.RecensioneDTO;
 import com.progetto.ingsw.backend.model.Recensioni;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class RecensioniMapper {
 
-    @Autowired
-    private UtenteMapper utenteMapper;
-
-    @Autowired
-    private ConfrontoMapper confrontoMapper;
+    private final UtenteMapper utenteMapper;
+    private final AutoMapper autoMapper;
 
     public RecensioneDTO mapToDTO(Recensioni r) {
         if (r == null) return null;
@@ -22,19 +20,20 @@ public class RecensioniMapper {
         dto.setVoto(r.getVoto());
         dto.setCommento(r.getCommento());
 
-        // Usiamo la data effettiva della recensione
         if (r.getDataRecensione() != null) {
             dto.setData(r.getDataRecensione().toString());
         }
 
-        // 1. Mappatura Utente (Chi ha scritto la recensione)
         if (r.getUtente() != null) {
             dto.setUtente(utenteMapper.mapToDTO(r.getUtente()));
         }
 
-        // 2. Mappatura Confronto (A quale sfida si riferisce)
-        if (r.getConfronto() != null) {
-            dto.setConfronto(confrontoMapper.mapToDTO(r.getConfronto()));
+        if (r.getAuto1() != null) {
+            dto.setAuto1(autoMapper.mapToDTO(r.getAuto1()));
+        }
+
+        if (r.getAuto2() != null) {
+            dto.setAuto2(autoMapper.mapToDTO(r.getAuto2()));
         }
 
         return dto;

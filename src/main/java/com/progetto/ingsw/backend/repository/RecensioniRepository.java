@@ -11,19 +11,15 @@ import java.util.List;
 @Repository
 public interface RecensioniRepository extends JpaRepository<Recensioni, Integer> {
 
-    // Recupera tutte le recensioni scritte per un determinato confronto (es. BMW vs Audi)
-    List<Recensioni> findByConfrontoIdOrderByDataRecensioneDesc(Integer confrontoId);
+    List<Recensioni> findByAuto1_IdAndAuto2_IdOrderByDataRecensioneDesc(Integer auto1, Integer auto2);
 
-    // 2. RECENSIONI DELL'UTENTE
-    // Tutte le opinioni espresse da un utente sulle varie sfide
-    List<Recensioni> findByUtenteId(Integer utenteId);
+    List<Recensioni> findByUtente_IdOrderByDataRecensioneDesc(Integer utenteId);
 
-    // Calcola il voto medio ricevuto da una specifica sfida
-    @Query("SELECT AVG(r.voto) FROM Recensioni r WHERE r.confronto.id = :confrontoId")
-    Double getVotoMedioByConfrontoId(@Param("confrontoId") Integer confrontoId);
+    @Query("SELECT AVG(r.voto) FROM Recensioni r WHERE r.auto1.id = :auto1 AND r.auto2.id = :auto2")
+    Double getVotoMedioByAutoIds(@Param("auto1") Integer auto1Id,
+                                 @Param("auto2") Integer auto2Id);
 
-    // Un utente può recensire una sfida specifica una sola volta
-    boolean existsByUtenteIdAndConfrontoId(Integer utenteId, Integer confrontoId);
+    boolean existsByUtente_IdAndAuto1_IdAndAuto2_Id(Integer utenteId, Integer auto1, Integer auto2);
 
-    void deleteByUtenteIdAndConfrontoId(Integer utenteId, Integer confrontoId);
+    void deleteByUtente_IdAndAuto1_IdAndAuto2_Id(Integer utenteId, Integer auto1, Integer auto2);
 }
