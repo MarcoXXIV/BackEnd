@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/preferiti")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class PreferitiController {
 
     private final PreferitiService preferitiService;

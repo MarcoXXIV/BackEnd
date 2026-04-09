@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/confronto")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class ConfrontoController {
 
     private final ConfrontoService confrontoService;

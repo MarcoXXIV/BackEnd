@@ -33,6 +33,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        // AGGIUNGI QUESTA RIGA: permette le chiamate di controllo CORS
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auto/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -54,7 +57,11 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Permetti l'origine del tuo frontend Angular
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200",     // Per quando sviluppi su browser PC
+                "http://localhost",          // Indirizzo standard di Capacitor su Android
+                "capacitor://localhost"      // Indirizzo standard di Capacitor su iOS
+        ));
 
         // Metodi HTTP consentiti
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

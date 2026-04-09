@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/utente")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class UtenteController {
 
     private final UtenteService utenteService;

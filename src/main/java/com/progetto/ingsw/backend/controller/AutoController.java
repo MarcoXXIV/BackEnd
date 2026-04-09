@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/auto")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class AutoController {
 
     private final AutoService autoService;
