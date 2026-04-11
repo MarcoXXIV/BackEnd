@@ -28,8 +28,14 @@ public class AutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AutoDTO> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(autoService.getAutoById(id));
+    public ResponseEntity<AutoDTO> getAutoById(@PathVariable Integer id) {
+        AutoDTO auto = autoService.getAutoById(id);
+
+        if (auto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(auto);
     }
 
     @GetMapping("/search")
