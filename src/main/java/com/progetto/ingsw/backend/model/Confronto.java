@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "confronto")
@@ -34,4 +35,8 @@ public class Confronto {
 
     @Column(name = "data_confronto", insertable = false, updatable = false)
     private LocalDateTime dataConfronto;
+
+    // --- AGGIUNGI QUESTA RELAZIONE ---
+    @OneToMany(mappedBy = "confronto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Preferiti> preferitiCorrelati;
 }

@@ -3,6 +3,8 @@ package com.progetto.ingsw.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table(name = "auto")
 @Data
@@ -54,5 +56,17 @@ public class Auto {
     private String euro;
 
     private Integer co2;
+
+    @OneToMany(mappedBy = "auto1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Confronto> confrontiComeAuto1;
+
+    @OneToMany(mappedBy = "auto2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Confronto> confrontiComeAuto2;
+
+    @OneToMany(mappedBy = "auto1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recensioni> recensioniComeAuto1;
+
+    @OneToMany(mappedBy = "auto2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recensioni> recensioniComeAuto2;
 
 }
