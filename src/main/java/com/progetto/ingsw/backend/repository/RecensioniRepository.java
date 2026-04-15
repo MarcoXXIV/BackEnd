@@ -22,4 +22,6 @@ public interface RecensioniRepository extends JpaRepository<Recensioni, Integer>
     boolean existsByUtente_IdAndAuto1_IdAndAuto2_Id(Integer utenteId, Integer auto1, Integer auto2);
 
     void deleteByUtente_IdAndAuto1_IdAndAuto2_Id(Integer utenteId, Integer auto1, Integer auto2);
+
+    void deleteByUtente_Id(Integer id);
 }

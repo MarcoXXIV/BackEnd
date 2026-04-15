@@ -111,4 +111,10 @@ public class RecensioniService {
                 ? new int[]{auto1Id, auto2Id}
                 : new int[]{auto2Id, auto1Id};
     }
+
+    @Transactional
+    public void eliminaTutteLeRecensioniUtente() {
+        Utente u = utenteService.getUtenteLoggatoEntity();
+        recensioniRepository.deleteByUtente_Id(u.getId());
+    }
 }

@@ -56,7 +56,6 @@ public class AutoService {
                 .collect(Collectors.toList());
     }
 
-    // Metodo helper per pulizia
     private boolean isNotBlank(String s) {
         return s != null && !s.isBlank();
     }
