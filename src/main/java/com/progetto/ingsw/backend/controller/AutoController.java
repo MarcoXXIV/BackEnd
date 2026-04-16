@@ -113,4 +113,25 @@ public class AutoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/aggiorna/{id}")
+    public ResponseEntity<?> aggiornaAuto(@PathVariable Integer id, @RequestBody Auto auto) {
+        try {
+            AutoDTO aggiornata = autoService.aggiornaAuto(id, auto);
+
+            return ResponseEntity.ok(aggiornata);
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Errore: L'auto con ID " + id + " non esiste più.");
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Si è verificato un errore tecnico imprevisto.");
+        }
+    }
 }
