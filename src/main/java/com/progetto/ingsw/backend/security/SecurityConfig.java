@@ -20,7 +20,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Permette l'uso di @PreAuthorize nei controller
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -55,17 +55,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Permetti l'origine del tuo frontend Angular
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200",     // Per quando sviluppi su browser PC
-                "http://localhost",          // Indirizzo standard di Capacitor su Android
-                "capacitor://localhost"      // Indirizzo standard di Capacitor su iOS
+                "http://localhost:4200",     //  browser PC
+                "http://localhost",          // Capacitor su Android
+                "capacitor://localhost"      // Capacitor su iOS
         ));
 
-        // Metodi HTTP consentiti
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Header fondamentali per far passare il Token JWT
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",

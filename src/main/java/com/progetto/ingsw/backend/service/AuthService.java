@@ -27,7 +27,7 @@ public class AuthService {
                 .ruolo("USER")
                 .build();
 
-        var savedUser = repository.save(user); // Recuperiamo l'utente salvato (con ID generato)
+        var savedUser = repository.save(user);
         var jwtToken = jwtUtils.generateToken(savedUser);
 
         return AuthResponse.builder()
@@ -39,7 +39,6 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(LoginRequest request) {
-        // 1. Esegue l'autenticazione (se fallisce lancia un'eccezione 403)
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -47,19 +46,16 @@ public class AuthService {
                 )
         );
 
-        // 2. Recupera l'utente completo dal database
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        // 3. Genera il token JWT
         var jwtToken = jwtUtils.generateToken(user);
 
-        // 4. COSTRUISCI LA RISPOSTA COMPLETA (Aggiungi i campi mancanti)
         return AuthResponse.builder()
                 .token(jwtToken)
-                .id(user.getId())           // <--- Fondamentale
-                .email(user.getEmail())     // <--- Fondamentale
-                .ruolo(user.getRuolo())     // <--- IL CAMPO CHE SERVE PER ADMIN!
+                .id(user.getId())
+                .email(user.getEmail())
+                .ruolo(user.getRuolo())
                 .build();
     }
 }

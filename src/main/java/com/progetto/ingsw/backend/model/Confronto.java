@@ -36,7 +36,6 @@ public class Confronto {
     @Column(name = "data_confronto", insertable = false, updatable = false)
     private LocalDateTime dataConfronto;
 
-    // --- AGGIUNGI QUESTA RELAZIONE ---
     @OneToMany(mappedBy = "confronto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Preferiti> preferitiCorrelati;
 }

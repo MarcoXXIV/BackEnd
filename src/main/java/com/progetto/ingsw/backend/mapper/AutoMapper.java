@@ -12,7 +12,6 @@ public class AutoMapper {
         if (auto == null) return null;
         AutoDTO dto = new AutoDTO();
 
-        // Dati Base
         dto.setId(auto.getId());
         dto.setMarca(auto.getMarca());
         dto.setModello(auto.getModello());
@@ -21,7 +20,6 @@ public class AutoMapper {
         dto.setCategoria(auto.getCategoria());
         dto.setCodice(auto.getCodice());
 
-        // Parametri Prestazionali (con gestione null per sicurezza)
         dto.setCv(auto.getCv());
         dto.setVelocitaMax(auto.getVelocitaMax());
         dto.setCoppia(auto.getCoppia());
@@ -33,7 +31,6 @@ public class AutoMapper {
         dto.setEuro(auto.getEuro());
         dto.setCo2(auto.getCo2());
 
-        // Conversione Double -> BigDecimal
         dto.setAccelerazione0100(auto.getAccelerazione0100() != null ? BigDecimal.valueOf(auto.getAccelerazione0100()) : null);
         dto.setAccelerazione100200(auto.getAccelerazione100200() != null ? BigDecimal.valueOf(auto.getAccelerazione100200()) : null);
         dto.setAccelerazione80140(auto.getAccelerazione80140() != null ? BigDecimal.valueOf(auto.getAccelerazione80140()) : null);

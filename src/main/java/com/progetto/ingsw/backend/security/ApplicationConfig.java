@@ -19,14 +19,12 @@ public class ApplicationConfig {
     @Autowired
     private UtenteRepository utenteRepository;
 
-    //  trovare l'utente nel DB usando l'email
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> {
             var utente = utenteRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + email));
 
-            // Trasformiamo il ruolo stringa (es. "ADMIN") in una GrantedAuthority (es. "ROLE_ADMIN")
             return org.springframework.security.core.userdetails.User.builder()
                     .username(utente.getEmail())
                     .password(utente.getPassword())
@@ -35,7 +33,6 @@ public class ApplicationConfig {
         };
     }
 
-    // Creiamo il Bean che mancava (AuthenticationProvider)
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -44,13 +41,11 @@ public class ApplicationConfig {
         return authProvider;
     }
 
-    // l'algoritmo per criptare le password (BCrypt è lo standard)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // gestisce il login nel controller
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

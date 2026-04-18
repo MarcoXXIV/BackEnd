@@ -35,7 +35,6 @@ public class ConfrontoService {
 
     @Transactional
     public ConfrontoDTO eseguiBattaglia(Integer auto1Id, Integer auto2Id) {
-        // 1. Recupero l'utente loggato e le entità delle auto
         Utente utente = utenteService.getUtenteLoggatoEntity();
 
         Auto a1 = autoRepository.findById(auto1Id)
@@ -43,19 +42,15 @@ public class ConfrontoService {
         Auto a2 = autoRepository.findById(auto2Id)
                 .orElseThrow(() -> new RuntimeException("Auto 2 non trovata"));
 
-        // 2. CONTROLLO ANTI-DUPLICATI
-        // CORRETTO: Usiamo confrontoRepository (non repository)
         Optional<Confronto> esistente = confrontoRepository.findByUtenteAndAuto1AndAuto2(utente, a1, a2);
 
         if (esistente.isPresent()) {
             return confrontoMapper.mapToDTO(esistente.get());
         }
 
-        // 3. LOGICA DI CONFRONTO (Punteggi)
         int p1 = 0;
         int p2 = 0;
 
-        // Più alto è meglio
         if (compare(a1.getPrezzo(), a2.getPrezzo()) > 0) p1++; else if (compare(a1.getPrezzo(), a2.getPrezzo()) < 0) p2++;
         if (compare(a1.getCv(), a2.getCv()) > 0) p1++; else if (compare(a1.getCv(), a2.getCv()) < 0) p2++;
         if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) > 0) p1++; else if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) < 0) p2++;
@@ -73,21 +68,17 @@ public class ConfrontoService {
         if (compare(a1.getRapportoPesoPotenza(), a2.getRapportoPesoPotenza()) < 0) p1++; else if (compare(a1.getRapportoPesoPotenza(), a2.getRapportoPesoPotenza()) > 0) p2++;
         if (compare(a1.getCo2(), a2.getCo2()) < 0) p1++; else if (compare(a1.getCo2(), a2.getCo2()) > 0) p2++;
 
-        // 4. CREAZIONE E SALVATAGGIO
         Confronto c = new Confronto();
         c.setUtente(utente);
         c.setAuto1(a1);
         c.setAuto2(a2);
-        // CORRETTO: Nomi dei setter allineati alla tua entità
         c.setPunteggio1(p1);
         c.setPunteggio2(p2);
         c.setDataConfronto(java.time.LocalDateTime.now());
 
-        // CORRETTO: Usiamo confrontoRepository
         return confrontoMapper.mapToDTO(confrontoRepository.save(c));
     }
 
-    // Metodo di utility per i confronti tra Double/Integer null-safe
     private int compare(Number n1, Number n2) {
         if (n1 == null || n2 == null) return 0;
         return Double.compare(n1.doubleValue(), n2.doubleValue());
@@ -119,10 +110,8 @@ public class ConfrontoService {
 
     @Transactional
     public void cancellaMiaCronologia() {
-        // Recuperiamo l'utente dal Token (Sicurezza!)
         Utente u = utenteService.getUtenteLoggatoEntity();
 
-        // Verifichiamo se ha effettivamente dei confronti prima di provare a cancellare
         long count = confrontoRepository.countByUtenteId(u.getId());
         if (count == 0) {
             throw new RuntimeException("Non hai confronti da eliminare nella tua cronologia.");
@@ -131,7 +120,6 @@ public class ConfrontoService {
         confrontoRepository.deleteByUtenteId(u.getId());
     }
 
-    // Metodo implementato per il controllo esistenza sfida
     @Transactional(readOnly = true)
     public boolean sfidaGiaFatta(Integer auto1Id, Integer auto2Id) {
         Integer utenteId = utenteService.getUtenteLoggatoEntity().getId();

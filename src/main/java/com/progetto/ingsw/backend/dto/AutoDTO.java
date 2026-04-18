@@ -12,7 +12,6 @@ public class AutoDTO {
     private Long prezzo;
     private String categoria;
 
-    // Parametri Prestazionali
     private Integer cv;
     private Integer velocitaMax;
     private BigDecimal accelerazione0100;
@@ -21,7 +20,6 @@ public class AutoDTO {
     private Integer coppia;
     private BigDecimal rapportoPesoPotenza;
 
-    // Parametri Tecnici
     private Integer cilindri;
     private Integer cilindrata;
     private Integer pesoKg;
@@ -29,10 +27,8 @@ public class AutoDTO {
     private String alimentazione;
     private String euro; // Classe ambientale
 
-    // Efficienza
     private BigDecimal consumoMedio;
     private Integer co2;
 
-    // Info di servizio
     private String codice;
 }

@@ -35,19 +35,15 @@ public class AutoService {
     public List<AutoDTO> cercaAuto(String marca, String modello) {
         List<Auto> lista;
 
-        // 1. Caso: Entrambi i filtri sono compilati (Ricerca specifica con AND)
         if (isNotBlank(marca) && isNotBlank(modello)) {
             lista = autoRepository.findByMarcaContainingIgnoreCaseAndModelloContainingIgnoreCase(marca, modello);
         }
-        // 2. Caso: Solo la marca è compilata
         else if (isNotBlank(marca)) {
             lista = autoRepository.findByMarcaContainingIgnoreCase(marca);
         }
-        // 3. Caso: Solo il modello è compilato (Questo risolverà il problema "Golf")
         else if (isNotBlank(modello)) {
             lista = autoRepository.findByModelloContainingIgnoreCase(modello);
         }
-        // 4. Caso: Nessun filtro (Catalogo completo)
         else {
             lista = autoRepository.findAll();
         }
@@ -95,7 +91,6 @@ public class AutoService {
     public AutoDTO salvaAuto(Auto auto) {
         if (auto == null) throw new RuntimeException("L'auto non può essere null");
 
-        // Se l'ID è 0 o nullo, assicuriamoci che Hibernate lo veda come NUOVO
         auto.setId(null);
 
         // VALIDAZIONI STRINGHE
@@ -123,7 +118,6 @@ public class AutoService {
         if (auto.getCilindrata() < 0) throw new RuntimeException("Cilindrata non valida");
         if (auto.getCo2() < 0) throw new RuntimeException("CO2 non valida");
 
-        // NORMALIZZAZIONE
         auto.setMarca(auto.getMarca().trim());
         auto.setModello(auto.getModello().trim());
         auto.setCategoria(auto.getCategoria().trim());
@@ -145,7 +139,6 @@ public class AutoService {
 
     @Transactional
     public AutoDTO aggiornaAuto(Integer id, Auto nuoviDati) {
-        // 1. Recupero l'auto dal DB
         Auto auto = autoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Auto non trovata con ID: " + id));
 

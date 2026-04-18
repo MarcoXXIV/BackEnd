@@ -20,20 +20,16 @@ public class ConfrontoMapper {
         ConfrontoDTO dto = new ConfrontoDTO();
         dto.setId(c.getId());
 
-        // 1. Deleghiamo la mappatura dell'utente all'UtenteMapper
         if (c.getUtente() != null) {
             dto.setUtente(utenteMapper.mapToDTO(c.getUtente()));
         }
 
-        // 2. Deleghiamo la mappatura delle auto all'AutoMapper (con i 22 parametri)
         dto.setAuto1(autoMapper.mapToDTO(c.getAuto1()));
         dto.setAuto2(autoMapper.mapToDTO(c.getAuto2()));
 
-        // 3. Mappiamo i dati diretti dell'entità Confronto
         dto.setPunteggio1(c.getPunteggio1());
         dto.setPunteggio2(c.getPunteggio2());
 
-        // Conversione della data in stringa per il JSON
         if (c.getDataConfronto() != null) {
             dto.setDataConfronto(c.getDataConfronto().toString());
         }
