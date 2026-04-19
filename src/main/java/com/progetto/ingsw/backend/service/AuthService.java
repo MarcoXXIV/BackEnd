@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -58,4 +60,15 @@ public class AuthService {
                 .ruolo(user.getRuolo())
                 .build();
     }
+
+    public EmailCheckResponse checkEmailExists(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        boolean exists = repository.existsByEmailIgnoreCase(normalizedEmail);
+        return new EmailCheckResponse(exists);
+    }
+
+    private String normalizeEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase();
+    }
+
 }

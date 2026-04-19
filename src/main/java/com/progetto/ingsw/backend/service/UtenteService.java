@@ -31,9 +31,8 @@ public class UtenteService {
         }
 
         String email = auth.getName();
-        System.out.println("Utente autenticato dal SecurityContext: " + email);
 
-        return utenteRepository.findByEmail(email)
+        return utenteRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));
     }
 
