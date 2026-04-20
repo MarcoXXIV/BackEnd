@@ -1,9 +1,6 @@
 package com.progetto.ingsw.backend.controller;
 
-import com.progetto.ingsw.backend.dto.AuthResponse;
-import com.progetto.ingsw.backend.dto.EmailCheckResponse;
-import com.progetto.ingsw.backend.dto.LoginRequest;
-import com.progetto.ingsw.backend.dto.RegisterRequest;
+import com.progetto.ingsw.backend.dto.*;
 import com.progetto.ingsw.backend.service.AuthService;
 import com.progetto.ingsw.backend.service.UtenteService;
 import jakarta.validation.Valid;
@@ -43,4 +40,10 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(authService.checkEmailExists(email));
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(authService.forgotPassword(request));
+    }
+
 }
