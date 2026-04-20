@@ -85,4 +85,19 @@ public class PreferitiService {
 
         return count;
     }
+
+    public boolean svuotaPreferiti() {
+        Utente u = utenteService.getUtenteLoggatoEntity();
+
+        if (u == null || u.getId() == null) {
+            return false;
+        }
+
+        try {
+            preferitiRepository.deleteByUtente_Id(u.getId());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

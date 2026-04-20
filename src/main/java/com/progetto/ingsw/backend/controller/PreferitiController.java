@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -51,6 +53,21 @@ public class PreferitiController {
             return ResponseEntity.ok(count);
         } catch (Exception e) {
             return ResponseEntity.ok(0L);
+        }
+    }
+
+    @DeleteMapping("/svuota")
+    public ResponseEntity<Map<String, Object>> svuotaPreferiti() {
+        boolean success = preferitiService.svuotaPreferiti();
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (success) {
+            response.put("message", "Lista preferiti svuotata con successo");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Impossibile svuotare i preferiti o utente non trovato");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 }

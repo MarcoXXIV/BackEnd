@@ -33,4 +33,6 @@ public interface PreferitiRepository extends JpaRepository<Preferiti, Integer> {
     """)
 
     List<Preferiti> findAllCompletiByUtenteId(@Param("utenteId") Integer utenteId);
+
+    void deleteByUtente_Id(Integer utenteId);
 }
