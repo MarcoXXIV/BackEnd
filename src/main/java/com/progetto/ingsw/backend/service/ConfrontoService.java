@@ -54,10 +54,8 @@ public class ConfrontoService {
         if (compare(a1.getPrezzo(), a2.getPrezzo()) > 0) p1++; else if (compare(a1.getPrezzo(), a2.getPrezzo()) < 0) p2++;
         if (compare(a1.getCv(), a2.getCv()) > 0) p1++; else if (compare(a1.getCv(), a2.getCv()) < 0) p2++;
         if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) > 0) p1++; else if (compare(a1.getVelocitaMax(), a2.getVelocitaMax()) < 0) p2++;
-        if (compare(a1.getCilindri(), a2.getCilindri()) > 0) p1++; else if (compare(a1.getCilindri(), a2.getCilindri()) < 0) p2++;
         if (compare(a1.getCoppia(), a2.getCoppia()) > 0) p1++; else if (compare(a1.getCoppia(), a2.getCoppia()) < 0) p2++;
         if (compare(a1.getCilindrata(), a2.getCilindrata()) > 0) p1++; else if (compare(a1.getCilindrata(), a2.getCilindrata()) < 0) p2++;
-        if (compare(a1.getAnno(), a2.getAnno()) > 0) p1++; else if (compare(a1.getAnno(), a2.getAnno()) < 0) p2++;
 
         // Più basso è meglio
         if (compare(a1.getAccelerazione0100(), a2.getAccelerazione0100()) < 0) p1++; else if (compare(a1.getAccelerazione0100(), a2.getAccelerazione0100()) > 0) p2++;
