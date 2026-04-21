@@ -93,7 +93,6 @@ public class AutoService {
 
         auto.setId(null);
 
-        // VALIDAZIONI STRINGHE
         if (isInvalid(auto.getMarca())) throw new RuntimeException("La marca è obbligatoria");
         if (isInvalid(auto.getModello())) throw new RuntimeException("Il modello è obbligatorio");
         if (isInvalid(auto.getCategoria())) throw new RuntimeException("La categoria è obbligatoria");
@@ -102,7 +101,6 @@ public class AutoService {
         if (isInvalid(auto.getCodice())) throw new RuntimeException("Il codice è obbligatorio");
         if (isInvalid(auto.getEuro())) throw new RuntimeException("La classe euro è obbligatoria");
 
-        // VALIDAZIONI NUMERICHE
         if (auto.getAnno() < 1886) throw new RuntimeException("Anno non valido");
         if (auto.getPrezzo() < 0) throw new RuntimeException("Prezzo non valido");
         if (auto.getCv() < 0) throw new RuntimeException("CV non validi");

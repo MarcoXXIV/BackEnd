@@ -25,7 +25,7 @@ public class AutoDTO {
     private Integer pesoKg;
     private String trazione;
     private String alimentazione;
-    private String euro; // Classe ambientale
+    private String euro;
 
     private BigDecimal consumoMedio;
     private Integer co2;

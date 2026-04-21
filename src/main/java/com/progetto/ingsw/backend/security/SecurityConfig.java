@@ -56,9 +56,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200",     //  browser PC
-                "http://localhost",          // Capacitor su Android
-                "capacitor://localhost"      // Capacitor su iOS
+                "http://localhost:4200",
+                "http://localhost",
+                "capacitor://localhost"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
